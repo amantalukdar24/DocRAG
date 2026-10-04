@@ -1,12 +1,12 @@
 "use client";
 
 import { useSearchParams } from "next/navigation";
-import AskAIClient from "./AskAIClient";
+import QuizClient from "./QuizClient";
 import Link from "next/link";
-import { FileText, BotMessageSquare, ArrowRight } from "lucide-react";
+import { FileText, HelpCircle, ArrowRight } from "lucide-react";
 import { Suspense } from "react";
 
-function AskAIContent() {
+function QuizContent() {
   const searchParams = useSearchParams();
   const docId =
     searchParams.get("docId") ||
@@ -19,13 +19,13 @@ function AskAIContent() {
       <div className="w-full min-h-[calc(100vh-4rem)] flex flex-col items-center justify-center p-6 text-center">
         <div className="max-w-md bg-zinc-900/90 border border-zinc-800 rounded-3xl p-8 space-y-6 shadow-2xl">
           <div className="w-16 h-16 mx-auto rounded-2xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400">
-            <BotMessageSquare size={32} />
+            <HelpCircle size={32} />
           </div>
 
           <div className="space-y-2">
             <h1 className="text-xl font-bold text-white">Select a Document</h1>
             <p className="text-sm text-zinc-400">
-              Please choose an uploaded document to start chatting with the RAG Assistant.
+              Please choose an uploaded document to generate and take AI quizzes.
             </p>
           </div>
 
@@ -42,20 +42,20 @@ function AskAIContent() {
     );
   }
 
-  return <AskAIClient docId={docId} />;
+  return <QuizClient docId={docId} />;
 }
 
-export default function AskAIPage() {
+export default function QuizPage() {
   return (
     <Suspense
       fallback={
         <div className="w-full min-h-[calc(100vh-4rem)] flex flex-col items-center justify-center space-y-4">
           <div className="w-10 h-10 border-4 border-amber-500/20 border-t-amber-500 rounded-full animate-spin" />
-          <p className="text-zinc-400 font-medium text-sm animate-pulse">Loading Ask AI...</p>
+          <p className="text-zinc-400 font-medium text-sm animate-pulse">Loading Quiz...</p>
         </div>
       }
     >
-      <AskAIContent />
+      <QuizContent />
     </Suspense>
   );
 }

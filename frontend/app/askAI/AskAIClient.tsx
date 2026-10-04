@@ -14,7 +14,6 @@ import {
   User,
   Copy,
   Check,
-  FileText,
   HelpCircle,
   RefreshCw,
 } from "lucide-react";
@@ -28,10 +27,10 @@ interface ChatI {
 }
 
 interface AskAIClientProps {
-  slug: string;
+  docId: string;
 }
 
-export default function AskAIClient({ slug }: AskAIClientProps) {
+export default function AskAIClient({ docId }: AskAIClientProps) {
   const [chats, setChats] = useState<ChatI[]>([]);
   const [question, setQuestion] = useState<string>("");
   const [loadingChats, setLoadingChats] = useState<boolean>(true);
@@ -46,11 +45,11 @@ export default function AskAIClient({ slug }: AskAIClientProps) {
 
   // Fetch initial chat history
   const fetchChats = async (): Promise<void> => {
-    if (!slug) return;
+    if (!docId) return;
     setLoadingChats(true);
     try {
       const token = typeof window !== "undefined" ? localStorage.getItem("authToken") || "" : "";
-      const result = await fetch(`${url}/chat/getchats/${slug}`, {
+      const result = await fetch(`${url}/chat/getchats/${docId}`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -76,7 +75,7 @@ export default function AskAIClient({ slug }: AskAIClientProps) {
 
   useEffect(() => {
     fetchChats();
-  }, [slug, url]);
+  }, [docId, url]);
 
   // Auto-scroll to bottom on chat update or typing state change
   useEffect(() => {
@@ -103,7 +102,7 @@ export default function AskAIClient({ slug }: AskAIClientProps) {
           "Content-Type": "application/json",
           authorization: token,
         },
-        body: JSON.stringify({ docId: slug, question: query }),
+        body: JSON.stringify({ docId, question: query }),
       });
       const data = await result.json();
 
@@ -136,7 +135,7 @@ export default function AskAIClient({ slug }: AskAIClientProps) {
           "Content-Type": "application/json",
           authorization: token,
         },
-        body: JSON.stringify({ docId: slug }),
+        body: JSON.stringify({ docId }),
       });
       const data = await result.json();
 
@@ -265,7 +264,7 @@ export default function AskAIClient({ slug }: AskAIClientProps) {
             <span>Documents</span>
           </Link>
           <div className="flex items-center space-x-2.5">
-            <div className="p-2 rounded-xl bg-gradient-to-tr from-amber-500/20 to-orange-500/20 border border-amber-500/30 text-amber-400">
+            <div className="p-2 rounded-xl bg-linear-to-tr from-amber-500/20 to-orange-500/20 border border-amber-500/30 text-amber-400">
               <BotMessageSquare size={20} />
             </div>
             <div>
@@ -275,8 +274,8 @@ export default function AskAIClient({ slug }: AskAIClientProps) {
                   RAG Powered
                 </span>
               </h1>
-              <p className="text-xs text-zinc-400 font-mono truncate max-w-[180px] sm:max-w-xs">
-                Doc ID: {slug}
+              <p className="text-xs text-zinc-400 font-mono truncate max-w-45 sm:max-w-xs">
+                Doc ID: {docId}
               </p>
             </div>
           </div>
@@ -317,7 +316,7 @@ export default function AskAIClient({ slug }: AskAIClientProps) {
           </div>
         ) : chats.length === 0 ? (
           <div className="h-full flex flex-col items-center justify-center text-center px-4 py-10 space-y-6">
-            <div className="w-16 h-16 rounded-3xl bg-gradient-to-tr from-amber-500/10 to-orange-500/20 border border-amber-500/30 flex items-center justify-center text-amber-400 shadow-xl shadow-amber-500/5">
+            <div className="w-16 h-16 rounded-3xl bg-linear-to-tr from-amber-500/10 to-orange-500/20 border border-amber-500/30 flex items-center justify-center text-amber-400 shadow-xl shadow-amber-500/5">
               <Sparkles size={32} />
             </div>
             <div className="max-w-md space-y-2">
@@ -359,7 +358,7 @@ export default function AskAIClient({ slug }: AskAIClientProps) {
 
                 {/* AI Response Message */}
                 <div className="flex justify-start items-start space-x-3">
-                  <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-amber-500 to-orange-600 flex items-center justify-center text-zinc-950 font-bold shrink-0 mt-1 shadow-md shadow-orange-500/20">
+                  <div className="w-8 h-8 rounded-full bg-linear-to-tr from-amber-500 to-orange-600 flex items-center justify-center text-zinc-950 font-bold shrink-0 mt-1 shadow-md shadow-orange-500/20">
                     <BotMessageSquare size={18} />
                   </div>
                   <div className="max-w-[90%] sm:max-w-[80%] rounded-2xl rounded-tl-xs bg-zinc-900/90 border border-zinc-800 p-4 sm:p-5 shadow-xl space-y-3 relative group">
@@ -395,7 +394,7 @@ export default function AskAIClient({ slug }: AskAIClientProps) {
             {/* AI Thinking Placeholder state */}
             {sending && (
               <div className="flex justify-start items-start space-x-3 animate-fade-in">
-                <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-amber-500 to-orange-600 flex items-center justify-center text-zinc-950 font-bold shrink-0 mt-1 animate-pulse">
+                <div className="w-8 h-8 rounded-full bg-linear-to-tr from-amber-500 to-orange-600 flex items-center justify-center text-zinc-950 font-bold shrink-0 mt-1 animate-pulse">
                   <BotMessageSquare size={18} />
                 </div>
                 <div className="rounded-2xl rounded-tl-xs bg-zinc-900/80 border border-zinc-800 px-5 py-4 flex items-center space-x-3 text-zinc-400 text-sm">
@@ -429,7 +428,7 @@ export default function AskAIClient({ slug }: AskAIClientProps) {
             <button
               onClick={() => handleSend()}
               disabled={sending || !question.trim()}
-              className="flex items-center space-x-2 px-5 py-2 rounded-xl bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-400 hover:to-orange-500 text-zinc-950 font-bold text-sm transition-all shadow-md shadow-amber-500/20 active:scale-95 cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed disabled:active:scale-100"
+              className="flex items-center space-x-2 px-5 py-2 rounded-xl bg-linear-to-r from-amber-500 to-orange-600 hover:from-amber-400 hover:to-orange-500 text-zinc-950 font-bold text-sm transition-all shadow-md shadow-amber-500/20 active:scale-95 cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed disabled:active:scale-100"
             >
               {sending ? (
                 <>

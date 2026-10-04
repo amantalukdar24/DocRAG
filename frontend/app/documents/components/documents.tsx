@@ -201,7 +201,7 @@ export default function Documents({ loadingUpload, triggerUploadClick }: Documen
                 {/* Right Action Buttons */}
                 <div className="flex items-center space-x-3 w-full sm:w-auto justify-end pt-2 sm:pt-0 border-t sm:border-t-0 border-zinc-800/60">
                   <Link
-                    href={`/quiz/${doc._id}`}
+                    href={`/quiz?docId=${doc._id}`}
                     className="flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-zinc-800 hover:bg-amber-500/20 hover:border-amber-500/40 border border-zinc-700/60 text-zinc-200 hover:text-amber-300 text-xs font-medium transition-all"
                   >
                     <Brain size={15} className="text-amber-400" />
@@ -209,7 +209,7 @@ export default function Documents({ loadingUpload, triggerUploadClick }: Documen
                   </Link>
 
                   <Link
-                    href={`/askAI/${doc._id}`}
+                    href={`/askAI?docId=${doc._id}`}
                     className="flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-zinc-800 hover:bg-orange-500/20 hover:border-orange-500/40 border border-zinc-700/60 text-zinc-200 hover:text-orange-300 text-xs font-medium transition-all"
                   >
                     <BotMessageSquare size={15} className="text-orange-400" />

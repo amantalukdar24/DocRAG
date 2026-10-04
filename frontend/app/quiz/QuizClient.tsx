@@ -4,27 +4,27 @@ import { useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
 import Link from "next/link";
 import { ArrowLeft, RefreshCw } from "lucide-react";
-import QuizData from "../../components/QuizData";
+import QuizData from "../components/QuizData";
 
 interface QuizClientProps {
-  slug: string;
+  docId: string;
 }
 
-export default function QuizClient({ slug }: QuizClientProps) {
+export default function QuizClient({ docId }: QuizClientProps) {
   const [quizData, setQuizData] = useState<any>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [errorMsg, setErrorMsg] = useState<string>("");
   const url: string = (process.env.NEXT_PUBLIC_Backend_Url as string) || "http://localhost:8000";
 
   const fetchQuiz = async (): Promise<void> => {
-    if (!slug) return;
+    if (!docId) return;
     setLoading(true);
     setErrorMsg("");
     setQuizData(null);
 
     try {
       const token = typeof window !== "undefined" ? localStorage.getItem("authToken") || "" : "";
-      const result = await fetch(`${url}/quiz/generatequiz/${slug}`, {
+      const result = await fetch(`${url}/quiz/generatequiz/${docId}`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -50,7 +50,7 @@ export default function QuizClient({ slug }: QuizClientProps) {
 
   useEffect(() => {
     fetchQuiz();
-  }, [slug, url]);
+  }, [docId, url]);
 
   return (
     <div className="w-full max-w-5xl mx-auto min-h-[calc(100vh-4rem)] bg-[#0c0d10] text-zinc-100 py-6 px-4 sm:px-6 lg:px-8 space-y-6">
