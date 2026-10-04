@@ -7,7 +7,6 @@ async function authUser(req: Request, res: Response, next: NextFunction): Promis
     const token: string | undefined = req.headers["authorization"];
     if (!token) return res.status(400).json({ success: false, mssg: "Unauthorized Access" });
     const decoded = await jwt.verify(token, process.env.JWT_Secret_Key as string) as JwtPayload;
-    console.log(token,decoded);
     if (!decoded) return res.status(400).json({ success: false, mssg: "Unauthorized Access" });
     req.user = decoded;
     next();

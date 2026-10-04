@@ -16,7 +16,7 @@ cloudinary.config({
 
 const uploadFile = async (req: Request, res: Response): Promise<any> => {
     try {
-        console.log(req?.user?._id)
+       
         if (!req?.user?._id) return res.status(400).json({ success: false, mssg: "Unauthorized Access" });
         if (!req.file) return res.status(404).json({ success: false, mssg: "File Not Found" });
          

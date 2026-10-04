@@ -10,7 +10,7 @@ const registerUser = async (req: Request, res: Response): Promise<any> => {
     const user = await USER.create({
       name: req.body.name, email: req.body.email, password: hashPassword
     });
-    const token: string = await jwt.sign({ name: user.name, email: user.email }, process.env.JWT_Secret_Key as string);
+    const token: string = await jwt.sign({ name: user.name, email: user.email,_id:user._id }, process.env.JWT_Secret_Key as string);
     return res.status(201).json({ success: true, mssg: "Account Created", token });
   } catch (err) {
     console.log(err);
