@@ -23,7 +23,7 @@ export default function QuizClient({ docId }: QuizClientProps) {
     setQuizData(null);
 
     try {
-      const token = typeof window !== "undefined" ? localStorage.getItem("authToken") || "" : "";
+      const token =  localStorage.getItem("authToken") as string;
       const result = await fetch(`${url}/quiz/generatequiz/${docId}`, {
         method: "GET",
         headers: {

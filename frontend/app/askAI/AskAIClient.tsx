@@ -48,7 +48,7 @@ export default function AskAIClient({ docId }: AskAIClientProps) {
     if (!docId) return;
     setLoadingChats(true);
     try {
-      const token = typeof window !== "undefined" ? localStorage.getItem("authToken") || "" : "";
+      const token =  localStorage.getItem("authToken") as string;
       const result = await fetch(`${url}/chat/getchats/${docId}`, {
         method: "GET",
         headers: {
@@ -95,7 +95,7 @@ export default function AskAIClient({ docId }: AskAIClientProps) {
     if (!overrideQuestion) setQuestion("");
 
     try {
-      const token = typeof window !== "undefined" ? localStorage.getItem("authToken") || "" : "";
+      const token =  localStorage.getItem("authToken") as string;
       const result = await fetch(`${url}/chat/getanswer`, {
         method: "POST",
         headers: {
@@ -128,7 +128,7 @@ export default function AskAIClient({ docId }: AskAIClientProps) {
 
     setClearing(true);
     try {
-      const token = typeof window !== "undefined" ? localStorage.getItem("authToken") || "" : "";
+      const token =  localStorage.getItem("authToken") as string;
       const result = await fetch(`${url}/chat/deletechats`, {
         method: "DELETE",
         headers: {

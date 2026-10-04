@@ -39,7 +39,7 @@ export default function Documents({ loadingUpload, triggerUploadClick }: Documen
   const getDocuments = useCallback(async (): Promise<void> => {
     setLoading(true);
     try {
-      const token = typeof window !== "undefined" ? localStorage.getItem("authToken") || "" : "";
+      const token =localStorage.getItem("authToken") as string;
       const result = await fetch(`${url}/doc/getdocuments?skip=${skip}`, {
         method: "GET",
         headers: {
@@ -71,7 +71,7 @@ export default function Documents({ loadingUpload, triggerUploadClick }: Documen
   // Fetch total document count
   const getTotalDocs = useCallback(async (): Promise<void> => {
     try {
-      const token = typeof window !== "undefined" ? localStorage.getItem("authToken") || "" : "";
+      const token =  localStorage.getItem("authToken") as string;
       const result = await fetch(`${url}/doc/gettotaldocs`, {
         method: "GET",
         headers: {
@@ -103,7 +103,7 @@ export default function Documents({ loadingUpload, triggerUploadClick }: Documen
 
     setDeletingId(_id);
     try {
-      const token = typeof window !== "undefined" ? localStorage.getItem("authToken") || "" : "";
+      const token =localStorage.getItem("authToken") as string;
       const result = await fetch(`${url}/doc/deletepdf`, {
         method: "DELETE",
         headers: {

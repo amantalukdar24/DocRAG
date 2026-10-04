@@ -19,7 +19,7 @@ export default function DocumentPage() {
       const formData = new FormData();
       formData.append("pdf", pdf);
 
-      const token = typeof window !== "undefined" ? localStorage.getItem("authToken") || "" : "";
+      const token =localStorage.getItem("authToken") as string ;
       const result = await fetch(`${url}/doc/upload`, {
         method: "POST",
         headers: {
@@ -79,7 +79,7 @@ export default function DocumentPage() {
           <button
             disabled={loading}
             onClick={() => uploadRef.current?.click()}
-            className="w-full sm:w-auto px-6 py-3 rounded-xl bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-400 hover:to-orange-500 text-zinc-950 font-bold text-sm transition-all shadow-lg shadow-amber-500/20 active:scale-95 cursor-pointer flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full sm:w-auto px-6 py-3 rounded-xl bg-linear-to-r from-amber-500 to-orange-600 hover:from-amber-400 hover:to-orange-500 text-zinc-950 font-bold text-sm transition-all shadow-lg shadow-amber-500/20 active:scale-95 cursor-pointer flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {loading ? (
               <>
