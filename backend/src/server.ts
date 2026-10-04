@@ -20,9 +20,9 @@ app.use(express.urlencoded({ extended: false }));
 
 // Routes
 app.use("/auth", authRouter);
-app.use("/doc",docRouter);
-app.use("/quiz",quizRouter);
-app.use("/chat",chatsRouter);
+app.use("/doc", docRouter);
+app.use("/quiz", quizRouter);
+app.use("/chat", chatsRouter);
 app.listen(PORT, (): void => {
-    console.log(`Server Running on PORT:${PORT}`);
+  console.log(`Server Running on PORT:${PORT}`);
 });
