@@ -28,7 +28,7 @@ export default function QuizClient({ docId }: QuizClientProps) {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
-          authorization: token,
+           "authorization": token,
         },
       });
       const data = await result.json();

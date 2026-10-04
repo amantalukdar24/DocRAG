@@ -44,7 +44,7 @@ export default function Documents({ loadingUpload, triggerUploadClick }: Documen
         method: "GET",
         headers: {
           "Content-Type": "application/json",
-          authorization: token,
+          "authorization": token,
         },
       });
       const data = await result.json();
@@ -76,7 +76,7 @@ export default function Documents({ loadingUpload, triggerUploadClick }: Documen
         method: "GET",
         headers: {
           "Content-Type": "application/json",
-          authorization: token,
+          "authorization": token,
         },
       });
       const data = await result.json();
@@ -108,7 +108,7 @@ export default function Documents({ loadingUpload, triggerUploadClick }: Documen
         method: "DELETE",
         headers: {
           "Content-Type": "application/x-www-form-urlencoded",
-          authorization: token,
+           "authorization": token,
         },
         body: new URLSearchParams({ publicId, _id }),
       });

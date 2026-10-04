@@ -23,7 +23,7 @@ export default function DocumentPage() {
       const result = await fetch(`${url}/doc/upload`, {
         method: "POST",
         headers: {
-          authorization: token,
+          "authorization": token,
         },
         body: formData,
       });

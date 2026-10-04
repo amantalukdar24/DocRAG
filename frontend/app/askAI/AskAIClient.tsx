@@ -53,7 +53,7 @@ export default function AskAIClient({ docId }: AskAIClientProps) {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
-          authorization: token,
+          "authorization": token,
         },
       });
       const data = await result.json();
@@ -100,7 +100,7 @@ export default function AskAIClient({ docId }: AskAIClientProps) {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          authorization: token,
+          "authorization": token,
         },
         body: JSON.stringify({ docId, question: query }),
       });
@@ -133,7 +133,7 @@ export default function AskAIClient({ docId }: AskAIClientProps) {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
-          authorization: token,
+          "authorization": token,
         },
         body: JSON.stringify({ docId }),
       });
