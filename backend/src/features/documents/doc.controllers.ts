@@ -6,6 +6,7 @@ import { embeddings } from "../../services/langchain.js";
 import qdrantClient, { COLLECTION_NAME, ensureCollection } from "../../qdrantConfig.js";
 import CHATS from "../askAI/chats.models.js";
 import crypto from "crypto";
+import { recursiveSplitText } from "../../utils/textSplitter.js";
 
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME as string,
@@ -16,7 +17,6 @@ cloudinary.config({
 
 const uploadFile = async (req: Request, res: Response): Promise<any> => {
     try {
-       
         if (!req?.user?._id) return res.status(400).json({ success: false, mssg: "Unauthorized Access" });
         if (!req.file) return res.status(404).json({ success: false, mssg: "File Not Found" });
          
@@ -25,32 +25,71 @@ const uploadFile = async (req: Request, res: Response): Promise<any> => {
             path: req.file.path,
             uploadedBy: req?.user._id
         });
+
         const pdfText = await loadPdfText(upload.path);
-        const splitter = pdfText
-          .split(/\n\s*\n/)
-          .map((p) => p.trim())
-          .filter(Boolean);
+        
+        if (!pdfText || !pdfText.trim()) {
+            return res.status(201).json({
+                success: true,
+                mssg: "PDF Uploaded (No extractable text found)"
+            });
+        }
 
-        if (splitter.length > 0) {
-          const vectors: any = await embeddings.embedDocuments(splitter);
-          const vectorSize = vectors[0]?.length || 768;
-          await ensureCollection(vectorSize);
+        const chunks = recursiveSplitText(pdfText, 1000, 200);
 
-          const points = splitter.map((chunk, index) => ({
-            id: crypto.randomUUID(),
-            vector: vectors[index],
-            payload: {
-              documentId: upload._id.toString(),
-              uploadedBy: upload.uploadedBy.toString(),
-              text: chunk,
-              chunkIndex: index,
-            },
-          }));
+        if (chunks.length > 0) {
+            const BATCH_SIZE = 20;
+            const vectors: number[][] = [];
 
-          await qdrantClient.upsert(COLLECTION_NAME, {
-            wait: true,
-            points,
-          });
+            for (let i = 0; i < chunks.length; i += BATCH_SIZE) {
+                const batch = chunks.slice(i, i + BATCH_SIZE);
+                try {
+                    const batchVectors: any = await embeddings.embedDocuments(batch);
+                    vectors.push(...batchVectors);
+                } catch (batchErr) {
+                    console.error(`Embedding batch failed at index ${i}, falling back item by item:`, batchErr);
+                    for (const singleChunk of batch) {
+                        try {
+                            const [singleVec]: any = await embeddings.embedDocuments([singleChunk]);
+                            vectors.push(singleVec || []);
+                        } catch {
+                            vectors.push([]);
+                        }
+                    }
+                }
+            }
+
+            const points = [];
+            for (let index = 0; index < chunks.length; index++) {
+                const vec = vectors[index];
+                if (Array.isArray(vec) && vec.length > 0) {
+                    points.push({
+                        id: crypto.randomUUID(),
+                        vector: vec,
+                        payload: {
+                            documentId: upload._id.toString(),
+                            uploadedBy: upload.uploadedBy.toString(),
+                            text: chunks[index],
+                            chunkIndex: index,
+                        },
+                    });
+                }
+            }
+
+            if (points.length > 0) {
+                const firstPoint = points[0];
+                const vectorSize = firstPoint?.vector ? firstPoint.vector.length : 768;
+                await ensureCollection(vectorSize);
+
+                const QDRANT_BATCH_SIZE = 100;
+                for (let i = 0; i < points.length; i += QDRANT_BATCH_SIZE) {
+                    const pointBatch = points.slice(i, i + QDRANT_BATCH_SIZE);
+                    await qdrantClient.upsert(COLLECTION_NAME, {
+                        wait: true,
+                        points: pointBatch,
+                    });
+                }
+            }
         }
 
         return res.status(201).json({
@@ -58,7 +97,7 @@ const uploadFile = async (req: Request, res: Response): Promise<any> => {
             mssg: "PDF Uploaded"
         });
     } catch (err) {
-        console.error(err);
+        console.error("Error in uploadFile:", err);
         return res.status(500).json({ success: false, mssg: "Internal Server Down" });
     }
 }

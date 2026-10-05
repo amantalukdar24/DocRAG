@@ -13,9 +13,16 @@ const getAnswer=async (req:Request,res:Response):Promise<any>=>{
         const document=await DOC.findById(docId);
         if(!document) return res.status(404).json({success:false,mssg:"Document Not Found"});
         
-        const vector=await embeddings.embedDocuments([question]);
-        const queryVector = vector[0];
-        if (!queryVector) {
+        let queryVector: number[] = [];
+        try {
+            queryVector = await embeddings.embedQuery(question);
+        } catch (embedErr) {
+            console.error("embedQuery failed, falling back to embedDocuments:", embedErr);
+            const vectors = await embeddings.embedDocuments([question]);
+            queryVector = vectors[0] || [];
+        }
+
+        if (!Array.isArray(queryVector) || queryVector.length === 0) {
             return res.status(400).json({ success: false, mssg: "Failed to generate question vector" });
         }
 
